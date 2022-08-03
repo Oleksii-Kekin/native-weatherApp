@@ -38,6 +38,7 @@ export default function App() {
           <ScrollView
               contentContainerStyle={{flexGrow: 1}}
               style={styles.scrollView}
+              showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl refreshing={isLoading} onRefresh={() => setTimeout(handleGetLocation, 200) } />
               }
