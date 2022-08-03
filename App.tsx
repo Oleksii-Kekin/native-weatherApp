@@ -34,17 +34,7 @@ export default function App() {
     <View style={styles.container}>
       { isLoading
           ? <LoadScreen size={150} />
-          :
-          <ScrollView
-              contentContainerStyle={{flexGrow: 1}}
-              style={styles.scrollView}
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl refreshing={isLoading} onRefresh={() => setTimeout(handleGetLocation, 200) } />
-              }
-        >
-            <Weather {...data} />
-          </ScrollView>
+          : <Weather isLoading={isLoading} onRefresh={handleGetLocation} {...data} />
       }
     </View>
   );
@@ -57,7 +47,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  scrollView: {
-    width: '100%',
-  }
 });

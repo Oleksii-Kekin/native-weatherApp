@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
 import { MotiView} from '@motify/components';
 import IconThunderstorm from '../assets/icons/thunderstorm.svg'
 import IconSun from '../assets/icons/sun.svg'
@@ -10,13 +10,15 @@ import IconRain from '../assets/icons/rain.svg'
 import IconMoonRain from '../assets/icons/moonRain.svg'
 
 interface IWeatherData {
+    isLoading: boolean;
     name: string;
     main: any;
     weather: any;
+    onRefresh: () => void;
 }
 
 export const Weather: React.FC<IWeatherData> = (props) => {
-    const { name, main, weather } = props;
+    const { isLoading, name, main, weather, onRefresh } = props;
     const weatherID = weather[0]['id'];
     const weatherDescription = weather[0]['description'];
 
@@ -43,41 +45,46 @@ export const Weather: React.FC<IWeatherData> = (props) => {
     }, [weatherID])
 
     return (
-        <View style={styles.container}>
-            { (name !== undefined && main !== undefined)
-                ?  <View style={styles.content}>
-                    <MotiView
-                        from={{ top: -100 }}
-                        animate={{ top: 0 }}
-                        transition={{ type: 'timing', duration: 1000}}
-                    >
-                        <View><Text style={{...styles.text, ...styles.city}}>{ name }</Text></View>
-                    </MotiView>
-                    <MotiView
-                        from={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ type: 'timing', duration: 1000 }}
-                        style={{ alignItems: 'center' }}
-                    >
-                        { renderCurrentWeatherIcon(weatherID) }
-                        <Text style={styles.text}>{ Math.floor(main.temp) }&#8451;</Text>
-                        <Text style={{...styles.text, ...styles.conditionText}}>{ weatherDescription }</Text>
-                    </MotiView>
-
-                    <MotiView
-                        from={{ bottom: -100 }}
-                        animate={{ bottom: 0 }}
-                        transition={{ type: 'timing', duration: 1000 }}
-                    >
-                        <Text style={{...styles.text, ...styles.country}}>Все буде Україна 🇺🇦</Text>
-                    </MotiView>
-                </View>
-                : <Text style={styles.text}>Data not found, please reload the page 😏</Text> }
-        </View>
+        <ScrollView
+            refreshControl={
+                <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+            }
+            contentContainerStyle={{flexGrow: 1}}
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+        >
+            <View style={styles.container}>
+                { (name !== undefined && main !== undefined)
+                    ?  <View style={styles.content}>
+                         <View><Text style={{...styles.text, ...styles.city}}>{ name }</Text></View>
+                         <MotiView
+                             from={{ opacity: 0 }}
+                             animate={{ opacity: 1 }}
+                             transition={{ delay: 300, type: 'timing', duration: 800 }}
+                             style={{ alignItems: 'center' }}
+                         >
+                             { renderCurrentWeatherIcon(weatherID) }
+                             <Text style={styles.text}>{ Math.floor(main.temp) }&#8451;</Text>
+                             <Text style={{...styles.text, ...styles.conditionText}}>{ weatherDescription }</Text>
+                         </MotiView>
+                         <MotiView
+                             from={{ bottom: -100 }}
+                             animate={{ bottom: 0 }}
+                             transition={{ delay: 300, type: 'timing', duration: 800 }}
+                         >
+                             <Text style={{...styles.text, ...styles.country}}>Все буде Україна 🇺🇦</Text>
+                         </MotiView>
+                    </View>
+                    : <Text style={styles.text}>Data not found, please reload the page 😏</Text> }
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    scrollView: {
+        width: '100%',
+    },
     container: {
         flex: 1,
         width: '100%',
