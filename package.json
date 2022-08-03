@@ -2,6 +2,7 @@
   "name": "native-weather",
   "slug": "native-weather",
   "description": "N A T I V E weather for your device",
+  "owner": "hideki_ishimura",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
